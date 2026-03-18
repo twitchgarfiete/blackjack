@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garficartas Grand Casino</title>
+    <style>
+        :root {
+            --oro: #d4af37;
+            --oro-brillante: #f9e29c;
+            --verde-tapete: #076324;
+            --rojo-casino: #8b0000;
+            --negro-fondo: #0a0a0a;
+            --blanco-marfil: #f5f5f0;
+        }
+
+        body { 
+            font-family: 'Georgia', serif; 
+            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%); 
+            color: var(--blanco-marfil); 
+            margin: 0; 
+            overflow-x: hidden;
+        }
+
+        /* --- MODAL DE REGLAS --- */
+        #modal-reglas {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: #222;
+            margin: 5% auto;
+            padding: 30px;
+            border: 3px solid var(--oro);
+            width: 80%;
+            max-width: 600px;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 0 30px var(--oro);
+        }
+        .close-modal {
+            position: absolute;
+            right: 20px; top: 10px;
+            color: var(--oro);
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .tabla-valores {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .tabla-valores td, .tabla-valores th {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+            text-align: left;
+        }
+        .categoria-color { width: 20px; height: 20px; display: inline-block; border-radius: 50%; margin-right: 10px; vertical-align: middle; }
+
+        /* --- ESTILOS LOGIN --- */
+        #pantalla-login { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://www.transparenttextures.com/patterns/dark-leather.png');
+        }
+        .login-card { 
+            background: var(--rojo-casino); padding: 40px; border-radius: 20px; border: 4px double var(--oro); 
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 450px; 
+        }
+        h1.logo { font-size: 2.5rem; color: var(--oro); text-shadow: 2px 2px 4px black; margin-bottom: 5px; letter-spacing: 2px; }
+
+        #seccion-seleccion { display: block; }
+        #contenedor-usuarios { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; max-height: 350px; overflow-y: auto; padding: 15px; }
+        .btn-usuario { 
+            background: var(--verde-tapete); color: white; border: 2px solid var(--oro); padding: 15px; border-radius: 50px; 
+            cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 0 #043a15; text-transform: uppercase;
+        }
+        .btn-usuario:hover { background: #0a8a33; transform: translateY(-2px); }
+
+        #seccion-pin { display: none; margin-top: 20px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #seccion-pin input { width: 80%; padding: 15px; margin: 20px 0; background: #fff; border: 3px solid var(--oro); color: #000; border-radius: 10px; font-size: 1.5rem; text-align: center; }
+
+        /* --- INTERFAZ DE JUEGO --- */
+        #pantalla-juego { display: none; }
+        .header { background: #000; padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--oro); color: var(--oro); }
+        .game-container { padding: 20px; max-width: 1100px; margin: auto; text-align: center; }
+        .board { background: var(--verde-tapete); border: 15px solid #4d2600; border-radius: 100px; padding: 40px; box-shadow: inset 0 0 100px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.6); margin-top: 20px; min-height: 500px; }
+        .area h3 { color: rgba(255,255,255,0.3); font-size: 2rem; text-transform: uppercase; letter-spacing: 5px; margin: 10px 0; }
+        .card-img { width: 100px; height: 140px; border-radius: 10px; border: 2px solid white; margin: 5px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); background: white; animation: slideIn 0.4s ease-out; }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .btn-bet, .btn-action, .btn-reglas { background: linear-gradient(to bottom, #d4af37, #b8860b); color: black; border: 2px solid #5e4506; padding: 15px 30px; font-size: 1.1rem; border-radius: 8px; box-shadow: 0 4px 0 #5e4506; text-transform: uppercase; font-weight: bold; cursor: pointer; }
+        .btn-reglas { padding: 8px 15px; font-size: 0.8rem; margin-left: 10px; }
+        #status-msg { font-size: 1.8rem; color: var(--oro-brillante); text-shadow: 2px 2px 4px rgba(0,0,0,0.8); margin: 15px; font-weight: bold; }
+        .coins { color: #fff; text-shadow: 0 0 10px #00ffcc; font-size: 1.4rem; }
+    </style>
+</head>
+<body>
+
+    <div id="modal-reglas">
+        <div class="modal-content">
+            <span class="close-modal" id="btn-cerrar-reglas">&times;</span>
+            <h2 style="color:var(--oro); border-bottom: 2px solid var(--oro); padding-bottom:10px;">Normas del Casino</h2>
+            <p>1. El objetivo es sumar 21 puntos o acercarse más que el Crupier sin pasarse.</p>
+            <p>2. Si superas los 21 puntos, pierdes automáticamente tu apuesta.</p>
+            <p>3. El Crupier está obligado a pedir carta hasta sumar al menos 17 puntos.</p>
+            
+            <h3 style="color:var(--oro); margin-top:25px;">Valor de las Cartas</h3>
+            <table class="tabla-valores">
+                <thead><tr><th>Categoría</th><th>Puntos</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="categoria-color" style="background:#cd7f32"></span> Bronce</td><td>1 Punto</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#c0c0c0"></span> Plata</td><td>2 Puntos</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#ffd700"></span> Oro</td><td>3 Puntos</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#9966cc"></span> Amatista</td><td>5 Puntos</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#082567"></span> Zafiro</td><td>8 Puntos</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#ffffff; border:1px solid #ccc"></span> Icono / Pesetero</td><td>10 Puntos</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#00ffff"></span> Drop</td><td>12 Puntos</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pantalla-login">
+        <div class="login-card">
+            <h1 class="logo">GARFICARTAS<br><small style="font-size: 1rem;">GRAND CASINO</small></h1>
+            <div id="seccion-seleccion">
+                <p style="color: var(--oro-brillante); margin-top: 20px;">BIENVENIDO, ELIJA SU IDENTIDAD</p>
+                <div id="contenedor-usuarios">
+                    <p style="grid-column: 1/3;">Abriendo las puertas del casino...</p>
+                </div>
+            </div>
+            <div id="seccion-pin">
+                <p id="label-usuario-sel" style="font-size: 1.5rem; color: var(--oro); margin-bottom: 5px;"></p>
+                <input type="password" id="pin-input" placeholder="****" maxlength="4">
+                <br>
+                <button class="btn-action" id="btn-login-ejecutar" style="width:100%">ENTRAR AL CASINO</button>
+                <button onclick="location.reload()" style="background:none; color:var(--blanco-marfil); text-decoration: underline; margin-top:15px; cursor:pointer; border:none;">Volver</button>
+            </div>
+            <p id="error-login" style="color:#ffcc00; font-weight:bold; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <div id="pantalla-juego">
+        <div class="header">
+            <div>
+                <span id="info-nombre" style="font-weight:bold; letter-spacing:1px;">JUGADOR: ...</span>
+                <button class="btn-reglas" id="btn-abrir-reglas">REGLAS Y VALORES</button>
+            </div>
+            <div id="info-monedas">SALDO: <span class="coins">0</span> 🪙</div>
+            <button onclick="sessionStorage.clear(); location.reload();" style="background:#555; color:white; border-radius:4px; padding:5px 10px; cursor:pointer; border:none;">SALIR</button>
+        </div>
+
+        <div class="game-container">
+            <div id="status-msg">HAGAN SUS APUESTAS</div>
+            <div class="board">
+                <div class="area">
+                    <h3>Crupier <span id="pts-dealer" style="color:white; opacity:0.6;"></span></h3>
+                    <div id="cards-dealer"></div>
+                </div>
+                <hr style="border: 1px dashed rgba(255,255,255,0.1); margin: 40px 0;">
+                <div class="area">
+                    <h3>Tus Cartas <span id="pts-player" style="color:var(--oro-brillante);"></span></h3>
+                    <div id="cards-player"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div id="bet-area">
+                    <span style="font-weight:bold; color:var(--oro);">APUESTA:</span>
+                    <input type="number" id="bet-amount" value="10" min="1" style="width:80px; padding:12px; font-size:1.2rem; border-radius:8px; border:2px solid var(--oro); background:black; color:white; text-align:center;">
+                    <button class="btn-bet" id="btn-deal">REPARTIR CARTAS</button>
+                </div>
+                <div id="play-area" style="display:none;">
+                    <button class="btn-action" id="btn-hit">PEDIR CARTA</button>
+                    <button class="btn-action" id="btn-stand" style="background: linear-gradient(to bottom, #8b0000, #5a0000); color:white; border-color:#3a0000;">PLANTARSE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { getDatabase, ref, get, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+    const confMonedas = { apiKey: "AIzaSyCzdMEE1FLznZY6RNo0JE57X_wm7GIwf7A", databaseURL: "https://garficartas-monedas-default-rtdb.europe-west1.firebasedatabase.app", projectId: "garficartas-monedas" };
+    const confColeccion = { apiKey: "AIzaSyBX9Pp_s7rmYjFwIFFz1hs41mKhgf3Q3JQ", databaseURL: "https://garficartas-default-rtdb.europe-west1.firebasedatabase.app", projectId: "garficartas" };
+
+    const dbMonedas = getDatabase(initializeApp(confMonedas, "monedas"));
+    const dbColeccion = getDatabase(initializeApp(confColeccion, "coleccion"));
+    const IMG_BASE = "https://raw.githubusercontent.com/twitchgarfiete/cartas/refs/heads/main/cartas_twitch/";
+
+    const MAZO_VALORES = {
+        bronce:{v:1,c:"#cd7f32",f:["cr_gameplays.png","el_mcgretrato.png","garfialbannil.png","garfiete_tenebroso.png","garfiopa.png","guinnito.png","hamstergito.png","las_escaleras_de_xavi.png","markitozzz.png","maya.png","nnalentina.png","paula_enmascarada.png","phoenix_peruano.png","viajes_sushi.png","villapene.png"]},
+        plata:{v:2,c:"#c0c0c0",f:["andrea_la_tormentas.png","escaleras_salteadas.png","filete.png","garfichef.png","garfipino.png","garfiuwu.png","jorgito_agresivo.png","markibingo.png","nat_acrobata.png","tortilla.png"]},
+        oro:{v:3,c:"#ffd700",f:["berenjena.png","don_jorge_mendoza.png","erika.png","garfinoticias.png","ivan_mi_capitan.png","la_bala_azul.png","markitos_fumon.png","mono_bailarin.png","natana.png","perolas.png"]},
+        amatista:{v:5,c:"#9966cc",f:["anushka_3.png","cooking_paula.png","estafait.png","mcreciclage.png","muajaja.png","r_g_m.png","soyseila.png"]},
+        zafiro:{v:8,c:"#082567",f:["markitos_skills.png","miriam_tiburona.png","phoenix_garfiete.png"]},
+        icono:{v:10,c:"#ffffff",f:["garfiete_brujo.png","valentina.png"]},
+        pesetero:{v:10,c:"#ff8c00",f:["garfiete_platanero.png","jorgito_carnicero.png"]},
+        drop:{v:12,c:"#00ffff",f:["garfito.png"]}
+    };
+
+    // --- LÓGICA DEL MODAL ---
+    const modal = document.getElementById("modal-reglas");
+    document.getElementById("btn-abrir-reglas").onclick = () => modal.style.display = "block";
+    document.getElementById("btn-cerrar-reglas").onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; };
+
+    let userSeleccionado = "";
+    let userKey = sessionStorage.getItem("usuarioLogueado");
+    let miSaldo = 0, miMazo = [], mazoTotal = [], handPlayer = [], handDealer = [], currentBet = 0;
+
+    // --- CARGAR USUARIOS ---
+    if (!userKey) {
+        onValue(ref(dbMonedas, 'usuarios'), (snapshot) => {
+            const lista = document.getElementById('contenedor-usuarios');
+            lista.innerHTML = "";
+            const data = snapshot.val();
+            if(!data) return;
+            Object.keys(data).sort().forEach(user => {
+                if(data[user].monedas !== undefined) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-usuario';
+                    btn.innerText = user;
+                    btn.onclick = () => {
+                        userSeleccionado = user;
+                        document.getElementById('seccion-seleccion').style.display = "none";
+                        document.getElementById('seccion-pin').style.display = "block";
+                        document.getElementById('label-usuario-sel').innerText = user.toUpperCase();
+                        document.getElementById('pin-input').focus();
+                    };
+                    lista.appendChild(btn);
+                }
+            });
+        });
+    }
+
+    document.getElementById('btn-login-ejecutar').onclick = async () => {
+        const pin = document.getElementById('pin-input').value.trim();
+        const snap = await get(ref(dbMonedas, `usuarios/${userSeleccionado}`));
+        if(snap.exists() && snap.val().pin === pin) {
+            sessionStorage.setItem("usuarioLogueado", userSeleccionado);
+            location.reload();
+        } else {
+            document.getElementById('error-login').innerText = "PIN INCORRECTO";
+        }
+    };
+
+    // --- JUEGO ---
+    if (userKey) {
+        document.getElementById('pantalla-login').style.display = "none";
+        document.getElementById('pantalla-juego').style.display = "block";
+        init();
+    }
+
+    async function init() {
+        document.getElementById('info-nombre').innerText = "JUGADOR: " + userKey.toUpperCase();
+        const snapM = await get(ref(dbMonedas, `usuarios/${userKey}`));
+        if(snapM.exists()) miSaldo = snapM.val().monedas;
+        updateUI();
+
+        const userCap = userKey.charAt(0).toUpperCase() + userKey.slice(1);
+        const snapC = await get(ref(dbColeccion, `usuarios/${userCap}/coleccion`));
+        const col = snapC.exists() ? snapC.val() : {};
+
+        for (const cat in MAZO_VALORES) {
+            MAZO_VALORES[cat].f.forEach(file => {
+                const card = { file, valor: MAZO_VALORES[cat].v, color: MAZO_VALORES[cat].c };
+                mazoTotal.push(card);
+                if (col[file.replace('.png','')] > 0) miMazo.push(card);
+            });
+        }
+    }
+
+    function updateUI() { document.querySelector('.coins').innerText = miSaldo; }
+    function draw(isPlayer) {
+        const p = isPlayer ? miMazo : mazoTotal;
+        const c = p[Math.floor(Math.random() * p.length)];
+        if (isPlayer) handPlayer.push(c); else handDealer.push(c);
+        render();
+        return c;
+    }
+
+    function render() {
+        const pS = document.getElementById('cards-player'), dS = document.getElementById('cards-dealer');
+        pS.innerHTML = ""; dS.innerHTML = "";
+        let ptsP = 0, ptsD = 0;
+        handPlayer.forEach(c => { pS.innerHTML += `<img src="${IMG_BASE}${c.file}" class="card-img" style="border-color:${c.color}">`; ptsP += c.valor; });
+        handDealer.forEach(c => { dS.innerHTML += `<img src="${IMG_BASE}${c.file}" class="card-img" style="border-color:${c.color}">`; ptsD += c.valor; });
+        document.getElementById('pts-player').innerText = ptsP;
+        document.getElementById('pts-dealer').innerText = ptsD;
+        return { ptsP, ptsD };
+    }
+
+    document.getElementById('btn-deal').onclick = async () => {
+        currentBet = parseInt(document.getElementById('bet-amount').value);
+        if (currentBet > miSaldo || currentBet <= 0) return alert("SALDO INSUFICIENTE");
+        if (miMazo.length < 2) return alert("NECESITAS AL MENOS 2 CARTAS EN TU COLECCIÓN");
+        miSaldo -= currentBet;
+        await set(ref(dbMonedas, `usuarios/${userKey}/monedas`), miSaldo);
+        updateUI();
+        handPlayer = []; handDealer = [];
+        document.getElementById('bet-area').style.display = "none";
+        document.getElementById('play-area').style.display = "block";
+        document.getElementById('status-msg').innerText = "REPARTIENDO...";
+        setTimeout(() => { draw(true); }, 200);
+        setTimeout(() => { draw(true); }, 700);
+        setTimeout(() => { draw(false); document.getElementById('status-msg').innerText = "¿OTRA CARTA O SE PLANTA?"; }, 1200);
+    };
+
+    document.getElementById('btn-hit').onclick = () => { draw(true); if (render().ptsP > 21) final(); };
+    document.getElementById('btn-stand').onclick = () => final();
+
+    async function final() {
+        document.getElementById('play-area').style.display = "none";
+        let { ptsP, ptsD } = render();
+        if (ptsP <= 21) {
+            document.getElementById('status-msg').innerText = "EL CRUPIER JUEGA...";
+            while (ptsD < 17) {
+                await new Promise(r => setTimeout(r, 800)); 
+                draw(false);
+                ptsD = render().ptsD;
+            }
+        }
+        let res = ""; let ganancia = 0;
+        if (ptsP > 21) { res = "¡SE HA PASADO!"; }
+        else if (ptsD > 21 || ptsP > ptsD) { res = "¡USTED GANA!"; ganancia = currentBet * 2; }
+        else if (ptsP === ptsD) { res = "EMPATE (DEVOLUCIÓN)"; ganancia = currentBet; }
+        else { res = "GANA LA CASA"; }
+        miSaldo += ganancia;
+        await set(ref(dbMonedas, `usuarios/${userKey}/monedas`), miSaldo);
+        await push(ref(dbMonedas, `auditoria_casino/${userKey}`), {
+            fecha: new Date().toLocaleString(), apuesta: currentBet, resultado: res,
+            puntos_tu: ptsP, cartas_tu: handPlayer.map(c => c.file),
+            puntos_maq: ptsD, cartas_maq: handDealer.map(c => c.file), saldo_final: miSaldo
+        });
+        updateUI();
+        document.getElementById('status-msg').innerText = res;
+        document.getElementById('bet-area').style.display = "block";
+    }
+</script>
+</body>
+</html>
