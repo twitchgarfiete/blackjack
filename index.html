@@ -12,6 +12,7 @@
             --rojo-casino: #8b0000;
             --negro-fondo: #0a0a0a;
             --blanco-marfil: #f5f5f0;
+            --edicion-limitada: #ff00ff; /* Color para la nueva categoría */
         }
 
         body { 
@@ -122,6 +123,7 @@
                     <tr><td><span class="categoria-color" style="background:#082567"></span> Zafiro</td><td>8 Puntos</td></tr>
                     <tr><td><span class="categoria-color" style="background:#ffffff; border:1px solid #ccc"></span> Icono / Pesetero</td><td>10 Puntos</td></tr>
                     <tr><td><span class="categoria-color" style="background:#00ffff"></span> Drop</td><td>12 Puntos</td></tr>
+                    <tr><td><span class="categoria-color" style="background:#ff00ff"></span> Edición Limitada</td><td>15 Puntos</td></tr>
                 </tbody>
             </table>
         </div>
@@ -197,14 +199,15 @@
     const IMG_BASE = "https://raw.githubusercontent.com/twitchgarfiete/cartas/refs/heads/main/cartas_twitch/";
 
     const MAZO_VALORES = {
-        bronce:{v:1,c:"#cd7f32",f:["cr_gameplays.png","el_mcgretrato.png","garfialbannil.png","garfiete_tenebroso.png","garfiopa.png","guinnito.png","hamstergito.png","las_escaleras_de_xavi.png","markitozzz.png","maya.png","nnalentina.png","paula_enmascarada.png","phoenix_peruano.png","viajes_sushi.png","villapene.png"]},
-        plata:{v:2,c:"#c0c0c0",f:["andrea_la_tormentas.png","escaleras_salteadas.png","filete.png","garfichef.png","garfipino.png","garfiuwu.png","jorgito_agresivo.png","markibingo.png","nat_acrobata.png","tortilla.png"]},
-        oro:{v:3,c:"#ffd700",f:["berenjena.png","don_jorge_mendoza.png","erika.png","garfinoticias.png","ivan_mi_capitan.png","la_bala_azul.png","markitos_fumon.png","mono_bailarin.png","natana.png","perolas.png"]},
-        amatista:{v:5,c:"#9966cc",f:["anushka_3.png","cooking_paula.png","estafait.png","mcreciclage.png","muajaja.png","r_g_m.png","soyseila.png"]},
-        zafiro:{v:8,c:"#082567",f:["markitos_skills.png","miriam_tiburona.png","phoenix_garfiete.png"]},
-        icono:{v:10,c:"#ffffff",f:["garfiete_brujo.png","valentina.png"]},
-        pesetero:{v:10,c:"#ff8c00",f:["garfiete_platanero.png","jorgito_carnicero.png"]},
-        drop:{v:12,c:"#00ffff",f:["garfito.png"]}
+        bronce:{v:1,c:"#cd7f32",f:["cr_gameplays.png","el_mcgretrato.png","garfialbannil.png","garfiete_tenebroso.png","garfiopa.png","guinnito.png","hamstergito.png","las_escaleras_de_xavi.png","markitozzz.png","maya.png","nnalentina.png","paula_enmascarada.png","phoenix_peruano.png","viajes_sushi.png","villapene.png","viajes_canica.png", "padrino_magico.png", "limonzzzio.png", "natcos_chen.png", "gabi_pulpeiro.png", "shwola.png", "la_secta_del_ojo.png", "adri_espadachin.png", "lapa_ciega.png", "inkultos.png", "arnau_encapuchado.png", "miriam_comunista.png", "markitos_espia.png", "viajes_triunfador.png", "planeta_peseta.png"]},
+        plata:{v:2,c:"#c0c0c0",f:["andrea_la_tormentas.png","escaleras_salteadas.png","filete.png","garfichef.png","garfipino.png","garfiuwu.png","jorgito_agresivo.png","markibingo.png","nat_acrobata.png","tortilla.png","janeth_graduada.png", "xavitos.png", "ana_racista.png", "garfiete_espannol.png", "anto_futbolista.png", "aitor_mallorquin.png", "markibingo_2.png", "manu_borracho.png", "santi_gordito.png", "wep.png"]},
+        oro:{v:3,c:"#ffd700",f:["berenjena.png","don_jorge_mendoza.png","erika.png","garfinoticias.png","ivan_mi_capitan.png","la_bala_azul.png","markitos_fumon.png","mono_bailarin.png","natana.png","perolas.png","markitos_fumon_2.png", "heleno.png", "coma_etilico.png", "adri_millonario.png", "phoenix_macarra.png", "markitos_pensativo.png", "perreo_supremo.png", "pilar.png", "los_buceadores.png", "sam_megamamada.png"]},
+        amatista:{v:5,c:"#9966cc",f:["anushka_3.png","cooking_paula.png","estafait.png","mcreciclage.png","muajaja.png","r_g_m.png","soyseila.png","mireya_delfina.png", "segarro_amego.png", "filetina.png", "ivan_enamorador.png", "los_saitzoncillos.png", "miriam_sevillana.png", "s_a_n.png"]},
+        zafiro:{v:8,c:"#082567",f:["markitos_skills.png","miriam_tiburona.png","phoenix_garfiete.png","primer_aniversario.png", "rocio.png", "tartazo.png"]},
+        icono:{v:10,c:"#ffffff",f:["garfiete_brujo.png","valentina.png","amara.png", "manu.png"]},
+        pesetero:{v:10,c:"#ff8c00",f:["garfiete_platanero.png","jorgito_carnicero.png","markitos_coyote.png", "garfiete_navidenno.png"]},
+        drop:{v:12,c:"#00ffff",f:["garfito.png","garfito_butanero.png"]},
+        edicion_limitada:{v:15,c:"#ff00ff",f:["el_hormiguero.png","garfiete.png","las_garficartas.png","los_suscriptores.png"]} 
     };
 
     // --- LÓGICA DEL MODAL ---
